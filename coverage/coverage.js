@@ -99,7 +99,8 @@ async function immediatePush(repo, ref, githubToken, azStorageAccount, azStorage
     try {
         // try deriving PR associated with last commit
         const lastCommitMessage = require("child_process").execSync("git log -1 --pretty=%B").toString();
-        const pr = +(/\(\#(\d+)\)/g.exec(lastCommitMessage) || [])[1];
+        const match = /\(\#(\d+)\)|pull request \#(\d+)/g.exec(lastCommitMessage) || [];
+        const pr = +(match[1] || match[2]);
         if (isNaN(pr)) throw `Could not deduce PR number from commit message ${JSON.stringify(lastCommitMessage)}`;
 
         const version = getPublishedPackageVersion();
